@@ -1,33 +1,37 @@
+import timeit 
 from time import sleep
+import time
 import math
 
-init_point = (10,10)
-dest_point = (90,90)
-square_block = (50,50,70,70)
-zone = (0,0,100,100)
+init_point = (1,1)
+dest_point = (1000,1000)
+square_block = (100,100,800,800)
+zone = (0,0,1000,1000)
 neighbour = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
 unchecked_pool = []
 checked_pool = {}
 checked_pool[init_point] = 0
 unchecked_pool.append(init_point)
 distance = 0
-def inSquare(point, square):
+def inSquare(point, square): 
     (xp,yp),(x1,y1,x2,y2) = point, square
     if (x2 >= xp >= x1)&(y2 >= yp >= y1):
         return True
     return False
     
-def checkNeighbours((x,y),checked_pool,unchecked_pool):
-    distance_sorted_neighbour = sorted(neighbour, key = lambda((nx,ny)):math.hypot(nx-x,ny-y))
-    print distance_sorted_neighbour
+def checkNeighbours((x,y),checked_pool,unchecked_pool,dest_point):
+    distance_sorted_neighbour = sorted(neighbour, key = lambda((xsh,ysh)): math.hypot(abs(x+xsh-dest_point[0]),abs(y+ysh-dest_point[1])))
+    #print distance_sorted_neighbour
     good_shifts = 0
-    shifts_remain = 3
-    for shift in neighbour:
+    shifts_remain = 2
+    for iter in range(8):
+        shift = distance_sorted_neighbour[iter]
         pointN = (x + shift[0], y + shift[1]) 
         if pointN not in checked_pool and inSquare(pointN, zone) and not inSquare(pointN, square_block):
             checked_pool[pointN] = checked_pool[(x,y)] + 1
             unchecked_pool.append(pointN)
-            print pointN
+            #print pointN
+            #sleep(0.01)
             good_shifts += 1
         shifts_remain -= 1
         
@@ -37,33 +41,42 @@ def checkNeighbours((x,y),checked_pool,unchecked_pool):
             break
             
     unchecked_pool.remove((x,y))
+    
 
-def getPathTo(checked_pool, dest_point, init_point, path = None):
-    if dest_point == init_point:
-        path.append(dest_point)
+def getPathTo(checked_pool, dest_point, init_point):
+    path = []
+    corner_sorted_neighbour = sorted(neighbour, key = lambda((x,y)): abs(x*y), reverse=True)
+    current_point = dest_point
+    if dest_point not in checked_pool:
         return path
-    if path == None:
-        path = []
-    corner_sorted_neighbour = sorted(neighbour, key = lambda((x,y)): x*y)
-    print corner_sorted_neighbour
-    for shift in corner_sorted_neighbour:
-        pointN = (dest_point[0] + shift[0], dest_point[1] + shift[1])
-        if pointN in checked_pool and checked_pool[pointN] < checked_pool[dest_point]:
-            path.append(dest_point)
-            return getPathTo(checked_pool, pointN, init_point, path)
-
+    while 1:
+        if current_point == init_point:
+            path.append(current_point)
+            break
+        
+        for iter in range(8):
+            shift = corner_sorted_neighbour[iter]
+            next_point = (current_point[0] + shift[0], current_point[1] + shift[1])
+            if next_point in checked_pool and checked_pool[next_point] < checked_pool[current_point]:
+                path.append(current_point)
+                current_point = next_point
+                break
+            if iter == 8:
+                return path
+    return path
+        
             
 counter = 0
 
-for point in unchecked_pool:
+start = time.time()
+for point in unchecked_pool: 
     if dest_point in checked_pool:
         break
-    checkNeighbours(point,checked_pool,unchecked_pool) 
-    print counter
+    checkNeighbours(point,checked_pool,unchecked_pool,dest_point) 
+    #print counter
     counter+=1
-    
-print checked_pool
+fin = time.time()    
+#print checked_pool
 print getPathTo(checked_pool, dest_point, init_point)
-  
+print fin - start
 
-    
