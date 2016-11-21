@@ -14,7 +14,7 @@ class MyStrategy:
     Grid = []
     GridW = {}
     currentWayPoint = ()
-    EnemyTowerWeight = -10
+    EnemyTowerAreaWeight = -10
     LivingUnitWeight = -9999
     
     def move(self, mywiz, world, game, move):

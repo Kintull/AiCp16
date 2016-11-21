@@ -8,7 +8,7 @@ class MapManager:
         
         self.mywiz = mywiz
         self.world = world
-        self.main_area = [(0,0),(world.width, world.height)]
+        self.map_area = [(0,0),(world.width, world.height)]
         self.lanes = ['top', 'mid', 'bot']
         self.area_to_rectangle = {7 :[(0,10),(2,8)],
                                   41:[(0,8),(1,5)],
@@ -26,20 +26,36 @@ class MapManager:
         self.top_blocks = [41,42,8,11,12]
         self.all_blocks = [7,41,42,8,11,12,5,22,21,6,32]
         self.all_blocks_default = [7,41,42,8,11,12,5,22,21,6,32]
+        
+        self.wood_blocks = [[(1,8),(1,2),(1,4)],
+                            [(5,4),(2,1),(8,1)],
+                            [(9,8),(6,5),(9,2)],
+                            [(2,9),(5,6),(8,9)]]
+        self.blocked_area = []
+        """ Wood blocks:
+               #####
+            #   #2#   #
+            ##   #   ##
+            #1#     #3#
+            ##   #   ##
+            #   #4#   #
+               #####
+        """                            
         self.enemy_in_area = {x:0 for block in self.all_blocks}
         
     def blockArea(self, map_blocks = []):
         if map_blocks == []:
             return 
-        self.all_blocks = filter(lambda x: x not in map_blocks, self.all_blocks)
+        self.blocked_area.extend(map_blocks)
     
     def unblockArea(self, map_blocks = []):
         if map_blocks == []:
             return 
-        self.all_blocks.extend(map_blocks)
+        self.blocked_area.remove(map_blocks)
 
     def useDefaultArea():
         self.all_blocks = self.all_blocks_default
+        self.blocked_area = []
         
     def getPushPoint(lane):
     #TODO: make lane refactoring (update mid and bot also)
