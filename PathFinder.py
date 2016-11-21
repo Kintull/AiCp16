@@ -93,25 +93,4 @@ class PathFinder:
                     return path
         return path
     
-    def inTriangle1(self,(px,py),triangle):
-        [(p0x, p0y), (p1x, p1y), (p2x, p2y)] = triangle
-        Area = 0.5 *(-p1y*p2x + p0y*(-p1x + p2x) + p0x*(p1y - p2y) + p1x*p2y)
-        s = 1/(2*Area) * (p0y*p2x - p0x*p2y + (p2y - p0y)*px + (p0x - p2x)*py)
-        t = 1/(2*Area) * (p0x*p1y - p0y*p1x + (p0y - p1y)*px + (p1x - p0x)*py)
-        if (0 <= s <= 1) and (0 <= t <= 1) and (0 <= 1-s-t <= 1):
-            return True
-        else:
-            return False
-        
-    def sign (self, p1, p2, p3):
-        (p1x, p1y) = p1 
-        (p2x, p2y) = p2
-        (p3x, p3y) = p3
-        return (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y)
-
-    def inTriangle2 (self, point, triangle):
-        [p1, p2, p3] = triangle
-        b1 = self.sign(point, p1, p2) < 0
-        b2 = self.sign(point, p2, p3) < 0
-        b3 = self.sign(point, p3, p1) < 0
-        return ((b1 == b2) and (b2 == b3))
+       
